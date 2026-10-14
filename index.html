@@ -716,6 +716,64 @@ function renderProjectCard(C,p,i){
     .pf-project-gallery{display:block;position:relative;height:auto;aspect-ratio:var(--pf-preview-ratio,2.15);max-height:52svh;gap:0;overflow:hidden}
     .pf-project-gallery .pf-tile-main{position:absolute;inset:0;width:100%;height:100%;grid-column:auto;grid-row:auto}
     .pf-project-gallery .pf-tile-main>img{display:block;width:100%;height:100%}
+
+    /* Переливання заголовка: срібло → лаванда → рожевий у тон кнопок. */
+    .pf-hero-title.pf-metal-text{background-image:linear-gradient(100deg,#8A93A3 0%,var(--pf-headingEnd) 18%,var(--pf-accent) 34%,var(--pf-buttonEnd) 46%,var(--pf-headingEnd) 60%,#8A93A3 78%,var(--pf-headingEnd) 100%);background-size:250% 100%;background-position:0% 50%;animation:pf-title-enter var(--pf-reveal) both,pf-title-shine 9s ease-in-out infinite alternate}
+    @keyframes pf-title-shine{to{background-position:100% 50%}}
+
+    /* Головні кнопки: живий градієнт, відблиск, світіння і натискання. */
+    .pf-contact-button{position:relative;isolation:isolate;overflow:hidden;background-size:200% 100%;background-position:0% 50%;transition:transform .35s cubic-bezier(.2,.8,.2,1.2),box-shadow .35s ease,background-position .6s ease}
+    .pf-contact-button::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.38) 50%,transparent 70%);transform:translateX(-120%);animation:pf-button-shine 4.5s ease-in-out 1.5s infinite;pointer-events:none}
+    .pf-contact-button::after{content:"";position:absolute;inset:-2px;z-index:-2;border-radius:inherit;background:radial-gradient(120% 140% at 50% 120%,var(--pf-buttonEnd),transparent 60%);opacity:0;transition:opacity .4s ease;pointer-events:none}
+    .pf-contact-button:hover{background-position:100% 50%;transform:translateY(-4px) scale(1.02)}
+    .pf-contact-button:hover::after{opacity:.55}
+    .pf-contact-button:hover::before{animation-duration:1.1s;animation-delay:0s}
+    .pf-contact-button:active{transform:translateY(0) scale(.96);transition-duration:.12s}
+    .pf-contact-button:disabled::before{animation:none}
+    @keyframes pf-button-shine{0%{transform:translateX(-120%)}35%,100%{transform:translateX(120%)}}
+
+    /* Стрілки: виліт і повернення. */
+    a:hover .pf-arrow,button:hover .pf-arrow{animation:pf-arrow-fly .55s cubic-bezier(.5,0,.3,1)}
+    @keyframes pf-arrow-fly{0%{transform:none}45%{transform:translate(14px,-14px);opacity:0}46%{transform:translate(-12px,12px);opacity:0}100%{transform:translate(3px,-3px);opacity:1}}
+
+    /* Контурні кнопки «Відкрити сайт»: заливка з лівого боку. */
+    .pf-ghost{position:relative;isolation:isolate;overflow:hidden;transition:color .35s ease,border-color .35s ease,transform .3s cubic-bezier(.2,.8,.2,1.2)}
+    .pf-ghost::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:linear-gradient(115deg,var(--pf-text),var(--pf-accent));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+    .pf-ghost:hover{background:transparent;border-color:var(--pf-accent);transform:translateY(-2px)}
+    .pf-ghost:hover::before{transform:scaleX(1)}
+    .pf-ghost:active{transform:scale(.95);transition-duration:.12s}
+
+    /* Навігація та дрібні посилання. */
+    .pf-header nav a{position:relative}
+    .pf-header nav a::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--pf-accent);transform:scaleX(0);transition:transform .35s cubic-bezier(.7,0,.2,1)}
+    .pf-header nav a:hover::after{transform:scaleX(1)}
+    .pf-brand{display:inline-block;transition:transform .35s cubic-bezier(.2,.8,.2,1.4),color .35s ease}
+    .pf-brand:hover{transform:rotate(-6deg) scale(1.08);color:var(--pf-accent)}
+    .pf-scroll-link{transition:color .3s ease}
+    .pf-scroll-link:hover{color:var(--pf-text)}
+    .pf-scroll-link>span[aria-hidden]{display:inline-block;animation:pf-scroll-hint 2.2s ease-in-out infinite}
+    @keyframes pf-scroll-hint{0%,100%{transform:none}50%{transform:translateY(5px)}}
+    .pf-footer a>span{display:inline-block;transition:transform .3s cubic-bezier(.2,.8,.2,1.4)}
+    .pf-footer a:hover>span{transform:translateY(-5px)}
+    .pf-dialog-close{transition:transform .35s cubic-bezier(.2,.8,.2,1.4),border-color .3s ease,color .3s ease}
+    .pf-dialog-close:hover{transform:rotate(90deg);border-color:var(--pf-accent);color:var(--pf-accent)}
+    .pf-dialog-close:active{transform:rotate(90deg) scale(.9)}
+
+    /* На сенсорних екранах hover «залипає», тому лишаємо відгук на дотик. */
+    @media(hover:none){
+      .pf-contact-button:hover{background-position:0% 50%;transform:none}
+      .pf-contact-button:hover::after{opacity:0}
+      .pf-contact-button:active{transform:scale(.96)}
+      .pf-contact-button:active::after{opacity:.55}
+      .pf-ghost:hover{transform:none;border-color:var(--pf-muted);color:inherit}
+      .pf-ghost:hover::before{transform:scaleX(0)}
+      .pf-ghost:active{color:var(--pf-background)}
+      .pf-ghost:active::before{transform:scaleX(1);transition-duration:.2s}
+      .pf-brand:hover{transform:none;color:inherit}
+      a:hover .pf-arrow,button:hover .pf-arrow{animation:none}
+      .pf-header nav a:active::after{transform:scaleX(1)}
+    }
+    @media(prefers-reduced-motion:reduce){.pf-contact-button::before{display:none}}
 </style>
 </head>
 <body>
