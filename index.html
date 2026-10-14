@@ -412,6 +412,7 @@ function renderProjectCard(C,p,i){
     /* Оновлює SEO-копію після редагування CONFIG: введіть savePortfolioForSEO() у консолі. */
     window.savePortfolioForSEO=()=>{
       const copy=document.documentElement.cloneNode(true);
+      copy.querySelectorAll('.pf-bolt').forEach(el=>el.remove());
       const savedDialog=copy.querySelector('#pf-request-dialog');
       if(savedDialog)savedDialog.removeAttribute('open');
       const savedForm=copy.querySelector('#pf-request-form');
@@ -791,6 +792,19 @@ function renderProjectCard(C,p,i){
       .pf-header nav a:active::after{transform:scaleX(1)}
     }
     @media(prefers-reduced-motion:reduce){.pf-contact-button::before{display:none}}
+
+    /* Блискавка: розряди біжать контуром літер, смуга проходить зліва направо. */
+    .pf-bolt{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+    .pf-bolt text{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:var(--pf-bolt-dash) var(--pf-bolt-gap);animation:pf-bolt-run 1.3s linear infinite}
+    .pf-bolt-glow{stroke:var(--pf-accent);stroke-width:calc(var(--pf-bolt-w) * 5)}
+    .pf-bolt-core{stroke:#fff;stroke-width:calc(var(--pf-bolt-w) * 2.6);animation:pf-bolt-run 1.3s linear infinite,pf-bolt-flicker .45s steps(1) infinite!important}
+    .pf-bolt-sweep{transform-box:fill-box;animation:pf-bolt-sweep 6.5s cubic-bezier(.55,0,.45,1) 1.4s infinite}
+    .pf-bolt text.pf-bolt-hole{fill:#000;stroke:none;animation:none}
+    @keyframes pf-bolt-run{to{stroke-dashoffset:var(--pf-bolt-run)}}
+    @keyframes pf-bolt-flicker{0%{opacity:1}30%{opacity:.55}38%{opacity:1}70%{opacity:.8}}
+    @keyframes pf-bolt-sweep{0%{transform:translateX(0)}32%,100%{transform:translateX(390%)}}
+    @media(prefers-reduced-motion:reduce){.pf-bolt{display:none}}
+    @media print{.pf-bolt{display:none}}
 </style>
 </head>
 <body>
@@ -868,5 +882,46 @@ function renderProjectCard(C,p,i){
       </dialog>
       <div class="pf-toast" role="status" aria-live="polite" aria-atomic="true"></div></div>
   <script>startPortfolio(CONFIG);</script>
+  <script>
+  /* Блискавка по контуру літер заголовка. SVG-копія тексту лише для ока: aria-hidden і не потрапляє в розмітку для пошуковиків. */
+  (function pfBolt(){
+    const title=document.getElementById('pf-title');
+    const textNode=title&&[...title.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());
+    if(!textNode||!window.SVGGraphicsElement)return;
+    title.querySelector('.pf-bolt')?.remove();
+    const label=pfEscape(textNode.textContent.trim());
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','pf-bolt');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+    svg.innerHTML='<defs>'
+      +'<filter id="pf-bolt-zap" x="-10%" y="-40%" width="120%" height="180%">'
+      +'<feTurbulence type="turbulence" baseFrequency="0.09" numOctaves="2" seed="2" result="noise"><animate attributeName="seed" values="1;6;3;8;4;9;2;7" dur="0.48s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>'
+      +'<feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="zap"/>'
+      +'<feGaussianBlur in="zap" stdDeviation="2.5" result="glow"/><feGaussianBlur in="zap" stdDeviation="9" result="aura"/>'
+      +'<feMerge><feMergeNode in="aura"/><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="zap"/></feMerge></filter>'
+      +'<linearGradient id="pf-bolt-band"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+      +'<mask id="pf-bolt-mask" maskUnits="userSpaceOnUse" x="-10%" y="-50%" width="120%" height="200%"><rect class="pf-bolt-sweep" x="-35%" y="-50%" width="35%" height="200%" fill="url(#pf-bolt-band)"/></mask>'
+      +'<mask id="pf-bolt-knock" maskUnits="userSpaceOnUse" x="-10%" y="-50%" width="120%" height="200%"><rect x="-10%" y="-50%" width="120%" height="200%" fill="#fff"/><text class="pf-bolt-hole">'+label+'</text></mask>'
+      +'</defs><g mask="url(#pf-bolt-mask)"><g filter="url(#pf-bolt-zap)"><g mask="url(#pf-bolt-knock)">'
+      +'<text class="pf-bolt-glow">'+label+'</text><text class="pf-bolt-core">'+label+'</text></g></g></g>';
+    title.appendChild(svg);
+    const texts=svg.querySelectorAll('text');
+    const fit=()=>{
+      const cs=getComputedStyle(title),size=parseFloat(cs.fontSize);
+      texts.forEach(t=>{Object.assign(t.style,{fontFamily:cs.fontFamily,fontWeight:cs.fontWeight,fontSize:size+'px',letterSpacing:cs.letterSpacing});t.setAttribute('x',0);t.setAttribute('y',0);});
+      const range=document.createRange();range.selectNodeContents(textNode);
+      const tr=range.getBoundingClientRect(),sr=svg.getBoundingClientRect(),bb=texts[0].getBBox();
+      texts.forEach(t=>{t.setAttribute('x',tr.left-sr.left-bb.x);t.setAttribute('y',tr.top-sr.top-bb.y);});
+      const dash=size*.6,gap=size*.9;
+      svg.style.setProperty('--pf-bolt-dash',dash+'px');svg.style.setProperty('--pf-bolt-gap',gap+'px');
+      svg.style.setProperty('--pf-bolt-run',-(dash+gap)+'px');svg.style.setProperty('--pf-bolt-w',Math.max(1,size*.012)+'px');
+      /* Тремтіння і світіння масштабуються разом із шрифтом. */
+      svg.querySelector('feTurbulence').setAttribute('baseFrequency',Math.min(.25,Math.max(.05,20/size)).toFixed(3));
+      svg.querySelector('feDisplacementMap').setAttribute('scale',Math.max(2.5,size*.045).toFixed(1));
+      const blurs=svg.querySelectorAll('feGaussianBlur');blurs[0].setAttribute('stdDeviation',Math.max(1,size*.011).toFixed(1));blurs[1].setAttribute('stdDeviation',Math.max(3,size*.04).toFixed(1));
+    };
+    fit();document.fonts?.ready.then(fit);
+    if('ResizeObserver' in window)new ResizeObserver(fit).observe(title);else addEventListener('resize',fit);
+  })();
+  </script>
 </body>
 </html>
