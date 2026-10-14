@@ -800,6 +800,7 @@ function renderProjectCard(C,p,i){
     .pf-firefly-halo{fill:#B48CFF}
     .pf-firefly-halo+.pf-firefly-halo{fill:#E2D4FF}
     .pf-firefly-core{fill:#fff}
+    .pf-firefly-trace path{fill:none;stroke-width:.017px;stroke-linecap:round;stroke-linejoin:round}
     @media(prefers-reduced-motion:reduce){.pf-bolt{display:none}}
 
     /* Біжуча стрічка по колу. Текст повторено 4 рази; відступ у кінці дорівнює gap, тож зсув на чверть — рівно один повний цикл без стрибка.
@@ -905,13 +906,14 @@ function renderProjectCard(C,p,i){
       <div class="pf-toast" role="status" aria-live="polite" aria-atomic="true"></div></div>
   <script>startPortfolio(CONFIG);</script>
   <script>
-  /* Світлячок: одна світна цятка по черзі обходить зовнішній контур кожної літери заголовка.
+  /* Світлячок: одна світна цятка по черзі обходить зовнішній контур кожної літери заголовка, малює за собою неоновий слід і розкидає іскри; після останньої літери все ім'я спалахує підписом.
      Зовнішні контури літер A–Z узято з Roboto Condensed 900 (перекриття й внутрішні отвори прибрано), в одиницях em; позицію кожної літери беремо зі справжнього тексту.
      SVG лише для ока: aria-hidden і не потрапляє в розмітку для пошуковиків. */
   (function pfFirefly(){
     const GLYPHS={"A":"M.42 0 .389 -.133H.216L.185 0H.005L.224 -.711H.38L.6 0Z","B":"M.294 0H.048V-.711H.274Q.331 -.711 .376 -.699Q.421 -.687 .452 -.663Q.484 -.638 .5 -.601Q.517 -.564 .517 -.515Q.517 -.471 .501 -.433Q.485 -.395 .447 -.372Q.439 -.367 .431 -.363Q.448 -.358 .461 -.35Q.497 -.327 .512 -.289Q.526 -.251 .526 -.21Q.526 -.141 .501 -.094Q.475 -.047 .423 -.023Q.372 0 .294 0Z","C":"M.379 -.241H.546Q.547 -.161 .515 -.104Q.484 -.048 .427 -.019Q.37 .01 .293 .01Q.231 .01 .183 -.012Q.135 -.033 .103 -.074Q.07 -.115 .053 -.174Q.037 -.232 .037 -.306V-.405Q.037 -.479 .054 -.538Q.072 -.596 .105 -.637Q.138 -.678 .185 -.7Q.232 -.721 .291 -.721Q.372 -.721 .428 -.691Q.485 -.66 .515 -.603Q.545 -.545 .547 -.465H.38Q.383 -.512 .375 -.538Q.366 -.565 .345 -.576Q.325 -.587 .291 -.587Q.267 -.587 .251 -.578Q.235 -.568 .225 -.547Q.215 -.526 .211 -.491Q.207 -.457 .207 -.406V-.306Q.207 -.255 .21 -.22Q.213 -.186 .223 -.164Q.232 -.143 .249 -.134Q.266 -.125 .293 -.125Q.321 -.125 .341 -.134Q.361 -.144 .372 -.169Q.382 -.194 .379 -.241Z","D":"M.248 0H.048V-.711H.245Q.308 -.711 .359 -.691Q.41 -.67 .447 -.631Q.484 -.592 .504 -.536Q.524 -.48 .524 -.409V-.301Q.524 -.23 .504 -.175Q.484 -.119 .447 -.08Q.41 -.041 .36 -.02Q.309 0 .248 0Z","E":"M.468 -.132V0H.048V-.711H.47V-.579H.215V-.429H.428V-.301H.215V-.132Z","F":"M.434 -.415V-.283H.215V0H.048V-.711H.454V-.579H.215V-.415Z","G":"M.55 -.38V-.083Q.533 -.067 .501 -.045Q.469 -.023 .42 -.007Q.372 .01 .306 .01Q.245 .01 .196 -.009Q.147 -.027 .113 -.065Q.078 -.103 .06 -.16Q.041 -.218 .041 -.296V-.414Q.041 -.492 .06 -.55Q.079 -.608 .113 -.646Q.147 -.684 .194 -.702Q.241 -.721 .298 -.721Q.383 -.721 .438 -.692Q.493 -.664 .521 -.61Q.548 -.556 .549 -.479H.389Q.387 -.52 .377 -.544Q.368 -.568 .35 -.579Q.332 -.589 .304 -.589Q.281 -.589 .264 -.581Q.247 -.572 .235 -.552Q.223 -.531 .217 -.498Q.21 -.464 .21 -.415V-.296Q.21 -.248 .216 -.214Q.222 -.181 .234 -.161Q.247 -.141 .267 -.131Q.288 -.122 .318 -.122Q.336 -.122 .349 -.127Q.361 -.132 .369 -.138Q.377 -.145 .383 -.147V-.262H.298V-.38Z","H":"M.215 -.711V-.429H.395V-.711H.562V0H.395V-.297H.215V0H.048V-.711Z","I":"M.223 -.711V0H.057V-.711Z","J":"M.278 -.223V-.711H.445V-.223Q.445 -.152 .417 -.1Q.389 -.047 .341 -.019Q.292 .01 .233 .01Q.172 .01 .124 -.014Q.076 -.038 .048 -.088Q.021 -.138 .021 -.215H.188Q.188 -.179 .194 -.158Q.199 -.138 .208 -.13Q.218 -.122 .233 -.122Q.249 -.122 .258 -.134Q.268 -.146 .273 -.169Q.278 -.191 .278 -.223Z","K":"M.215 -.711V-.411L.256 -.488L.362 -.711H.568L.375 -.402L.564 0H.367L.265 -.251L.215 -.188V0H.048V-.711Z","L":"M.456 -.132V0H.048V-.711H.215V-.132Z","M":"M.048 -.711H.267L.379 -.216L.491 -.711H.709V0H.542V-.166L.556 -.454L.434 0H.324L.201 -.454L.215 -.166V0H.048Z","N":"M.56 -.711V0H.394L.215 -.442V0H.048V-.711H.215L.394 -.269V-.711Z","O":"M.565 -.409V-.301Q.565 -.225 .546 -.167Q.527 -.108 .492 -.069Q.457 -.03 .408 -.01Q.36 .01 .302 .01Q.243 .01 .194 -.01Q.146 -.03 .111 -.069Q.076 -.108 .057 -.167Q.038 -.225 .038 -.301V-.409Q.038 -.485 .057 -.544Q.076 -.603 .111 -.642Q.146 -.681 .194 -.701Q.242 -.721 .301 -.721Q.36 -.721 .408 -.701Q.457 -.681 .492 -.642Q.526 -.603 .546 -.544Q.565 -.485 .565 -.409Z","P":"M.296 -.241H.215V0H.048V-.711H.296Q.37 -.711 .424 -.68Q.477 -.648 .506 -.594Q.535 -.54 .535 -.47Q.535 -.401 .506 -.35Q.477 -.298 .424 -.27Q.37 -.241 .296 -.241Z","Q":"M.567 -.409V-.302Q.567 -.225 .548 -.167Q.529 -.108 .494 -.069Q.482 -.057 .47 -.046L.566 .04L.462 .13L.33 .009Q.316 .01 .303 .01Q.244 .01 .195 -.01Q.147 -.03 .112 -.069Q.077 -.108 .058 -.167Q.039 -.225 .039 -.302V-.409Q.039 -.486 .058 -.544Q.077 -.603 .112 -.642Q.146 -.681 .195 -.701Q.243 -.721 .302 -.721Q.361 -.721 .409 -.701Q.458 -.681 .493 -.642Q.528 -.603 .548 -.544Q.567 -.486 .567 -.409Z","R":"M.049 -.711H.292Q.363 -.711 .416 -.687Q.468 -.662 .496 -.614Q.524 -.566 .524 -.496Q.524 -.435 .509 -.394Q.493 -.353 .465 -.327Q.446 -.309 .423 -.295L.543 -.007V0H.364L.263 -.251H.216V0H.049Z","S":"M.347 -.189Q.347 -.206 .344 -.219Q.34 -.232 .331 -.244Q.322 -.256 .304 -.268Q.286 -.28 .256 -.293Q.218 -.309 .181 -.328Q.145 -.348 .115 -.375Q.086 -.401 .069 -.437Q.051 -.473 .051 -.521Q.051 -.567 .069 -.604Q.087 -.641 .118 -.667Q.15 -.693 .193 -.707Q.236 -.721 .287 -.721Q.354 -.721 .406 -.694Q.457 -.667 .486 -.617Q.515 -.567 .515 -.5H.349Q.349 -.527 .342 -.547Q.335 -.568 .321 -.58Q.306 -.591 .283 -.591Q.262 -.591 .247 -.582Q.233 -.572 .226 -.555Q.218 -.539 .218 -.52Q.218 -.503 .226 -.49Q.233 -.478 .246 -.466Q.259 -.455 .276 -.445Q.293 -.435 .313 -.425Q.362 -.407 .399 -.385Q.437 -.362 .462 -.334Q.487 -.306 .5 -.271Q.513 -.235 .513 -.19Q.513 -.142 .498 -.105Q.482 -.068 .453 -.042Q.424 -.017 .383 -.003Q.341 .01 .29 .01Q.242 .01 .197 -.004Q.151 -.018 .114 -.047Q.077 -.076 .055 -.122Q.033 -.167 .033 -.23H.201Q.201 -.199 .206 -.178Q.211 -.156 .221 -.143Q.232 -.13 .249 -.125Q.265 -.119 .29 -.119Q.312 -.119 .324 -.129Q.337 -.138 .342 -.154Q.347 -.17 .347 -.189Z","T":"M.531 -.711V-.579H.358V0H.191V-.579H.023V-.711Z","U":"M.362 -.711H.529V-.227Q.529 -.144 .5 -.092Q.47 -.039 .416 -.015Q.362 .01 .289 .01Q.216 .01 .162 -.015Q.108 -.039 .077 -.092Q.047 -.144 .047 -.227V-.711H.215V-.227Q.215 -.183 .223 -.16Q.231 -.138 .248 -.13Q.264 -.122 .289 -.122Q.314 -.122 .331 -.13Q.347 -.138 .354 -.16Q.362 -.183 .362 -.227Z","V":"M.191 -.711 .292 -.212 .393 -.711H.58L.383 0H.201L.005 -.711Z","W":"M.181 -.711 .235 -.347 .299 -.711H.44L.507 -.345L.561 -.711H.726L.605 0H.433L.37 -.328L.309 0H.136L.016 -.711Z","X":"M.202 -.711 .282 -.475 .361 -.711H.551L.392 -.358L.555 0H.363L.282 -.241L.2 0H.007L.171 -.358L.011 -.711Z","Y":"M.185 -.711 .276 -.402 .368 -.711H.547L.361 -.255V0H.191V-.255L.005 -.711Z","Z":"M.508 -.132V0H.035V-.09L.315 -.579H.029V-.711H.507V-.623L.23 -.132Z"};
-    const SPEED=1.1;   /* em за секунду вздовж контуру */
-    const FADE=.12;    /* em: згасання й спалах на початку та в кінці кожного контуру */
+    const SPEED=2.3;   /* em за секунду вздовж контуру */
+    const FADE=.1;     /* em: згасання й спалах на стику контурів */
+    const FINALE=1.8;  /* с: спалах усього імені після останньої літери */
     const title=document.getElementById('pf-title');
     const textNode=title&&[...title.childNodes].find(n=>n.nodeType===3&&n.textContent.trim());
     if(!textNode||!window.SVGGraphicsElement)return;
@@ -919,43 +921,92 @@ function renderProjectCard(C,p,i){
     const NS='http://www.w3.org/2000/svg';
     const svg=document.createElementNS(NS,'svg');
     svg.setAttribute('class','pf-bolt');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
-    svg.innerHTML='<defs><filter id="pf-firefly-blur" x="-300%" y="-300%" width="700%" height="700%"><feGaussianBlur stdDeviation="1"/></filter></defs>'
-      +'<g class="pf-firefly-paths"></g><g class="pf-firefly"><circle class="pf-firefly-halo" filter="url(#pf-firefly-blur)"/><circle class="pf-firefly-halo" filter="url(#pf-firefly-blur)"/><circle class="pf-firefly-core"/></g>';
+    svg.innerHTML='<defs>'
+      +'<filter id="pf-firefly-blur" x="-300%" y="-300%" width="700%" height="700%"><feGaussianBlur stdDeviation="1"/></filter>'
+      +'<filter id="pf-firefly-neon" x="-15%" y="-40%" width="130%" height="180%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
+      +'<g class="pf-firefly-paths"></g><g class="pf-firefly-trace" filter="url(#pf-firefly-neon)"></g><g class="pf-firefly-sparks"></g>'
+      +'<g class="pf-firefly"><circle class="pf-firefly-halo" filter="url(#pf-firefly-blur)"/><circle class="pf-firefly-halo" filter="url(#pf-firefly-blur)"/><circle class="pf-firefly-core"/></g>';
     title.appendChild(svg);
-    const holder=svg.querySelector('.pf-firefly-paths'),fly=svg.querySelector('.pf-firefly'),blur=svg.querySelector('feGaussianBlur');
-    const halos=svg.querySelectorAll('.pf-firefly-halo'),core=svg.querySelector('.pf-firefly-core');
-    let contours=[],total=0,size=0;
+    const holder=svg.querySelector('.pf-firefly-paths'),trace=svg.querySelector('.pf-firefly-trace'),sparkLayer=svg.querySelector('.pf-firefly-sparks');
+    const fly=svg.querySelector('.pf-firefly'),halos=svg.querySelectorAll('.pf-firefly-halo'),core=svg.querySelector('.pf-firefly-core');
+    const [haloBlur,neonBlur]=svg.querySelectorAll('feGaussianBlur');
+    /* Колір іде за градієнтом заголовка: лавандовий на початку імені, рожевий у кінці. */
+    const FROM=[201,181,255],TO=[255,150,205];
+    const tint=k=>'rgb('+FROM.map((v,i)=>Math.round(v+(TO[i]-v)*k)).join(',')+')';
+    let contours=[],total=0,size=0,radius=2;
     const fit=()=>{
       const text=textNode.textContent,sr=svg.getBoundingClientRect(),range=document.createRange();
       size=parseFloat(getComputedStyle(title).fontSize);
       /* Базова лінія: нульовий inline-block стоїть рівно на ній. */
       const probe=document.createElement('span');probe.style.cssText='display:inline-block;width:0;height:0;vertical-align:baseline';
       title.insertBefore(probe,textNode.nextSibling);const base=probe.getBoundingClientRect().top-sr.top;probe.remove();
-      holder.textContent='';contours=[];total=0;
+      holder.textContent='';trace.textContent='';contours=[];total=0;
+      const width=Math.max(1,sr.width);
       for(let i=0;i<text.length;i++){
         const d=GLYPHS[text[i].toUpperCase()];if(!d||text[i].trim()==='')continue;
         range.setStart(textNode,i);range.setEnd(textNode,i+1);const x=range.getBoundingClientRect().left-sr.left;
+        const transform='translate('+x+' '+base+') scale('+size+')',color=tint(Math.min(1,Math.max(0,x/width)));
         /* Кожен контур окремо: так світлячок гасне на стику контурів і не «стрибає» видимо. */
         d.split(/(?=M)/).forEach(part=>{
-          const p=document.createElementNS(NS,'path');p.setAttribute('d',part);p.setAttribute('transform','translate('+x+' '+base+') scale('+size+')');holder.appendChild(p);
-          const len=p.getTotalLength();contours.push({p,x,base,len,start:total});total+=len;
+          const p=document.createElementNS(NS,'path');p.setAttribute('d',part);p.setAttribute('transform',transform);holder.appendChild(p);
+          const t=p.cloneNode();t.style.stroke=color;t.style.display='none';trace.appendChild(t);
+          const len=p.getTotalLength();contours.push({p,t,x,base,len,start:total,color,glow:0});total+=len;
         });
       }
-      const r=Math.max(1.8,size*.018);
-      core.setAttribute('r',r);halos[0].setAttribute('r',r*3.2);halos[1].setAttribute('r',r*1.8);blur.setAttribute('stdDeviation',(r*1.5).toFixed(2));
+      radius=Math.max(1.8,size*.018);
+      core.setAttribute('r',radius);halos[0].setAttribute('r',radius*3.2);halos[1].setAttribute('r',radius*1.8);
+      haloBlur.setAttribute('stdDeviation',(radius*1.5).toFixed(2));neonBlur.setAttribute('stdDeviation',Math.max(1.5,size*.022).toFixed(2));
+    };
+    /* Іскри: невеликий пул кружечків, що відлітають від світлячка, здіймаються й гаснуть. */
+    const sparks=Array.from({length:28},()=>{const el=document.createElementNS(NS,'circle');el.style.display='none';sparkLayer.appendChild(el);return {el,life:0};});
+    let sparkIndex=0,emit=0;
+    const spawn=(x,y,color,power=1)=>{
+      const sp=sparks[sparkIndex++%sparks.length],a=Math.random()*Math.PI*2,v=size*(.08+.3*Math.random())*power;
+      Object.assign(sp,{x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-size*.08,life:.45+.5*Math.random()});sp.max=sp.life;
+      sp.el.style.fill=color;sp.el.style.display='';
+    };
+    const setTrace=(c,glow,dash)=>{
+      c.glow=glow;
+      if(glow<=.01){if(c.t.style.display!=='none')c.t.style.display='none';return;}
+      c.t.style.display='';c.t.style.opacity=glow.toFixed(3);c.t.setAttribute('stroke-dasharray',dash);
     };
     const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-    let frame=0,visible=true,t0=performance.now();
+    let frame=0,visible=true,t0=performance.now(),last=t0,lastCycle=-1,finaleBurst=false;
     const step=now=>{
       frame=0;if(!total||!visible||reduced.matches)return;
-      const dist=((now-t0)/1000*SPEED)%total;
-      let lo=0,hi=contours.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(contours[mid].start<=dist)lo=mid;else hi=mid-1;}
-      const c=contours[lo],local=dist-c.start,pt=c.p.getPointAtLength(local);
-      fly.setAttribute('transform','translate('+(c.x+pt.x*size).toFixed(2)+' '+(c.base+pt.y*size).toFixed(2)+')');
-      fly.style.opacity=Math.min(1,local/FADE,(c.len-local)/FADE).toFixed(3);
+      const dt=Math.min(.05,(now-last)/1000);last=now;
+      const travel=total/SPEED,elapsed=(now-t0)/1000,cycle=Math.floor(elapsed/(travel+FINALE)),phase=elapsed-cycle*(travel+FINALE);
+      if(cycle!==lastCycle){lastCycle=cycle;finaleBurst=false;contours.forEach(c=>setTrace(c,0,'none'));}
+      if(phase<travel){
+        const dist=phase*SPEED;
+        let lo=0,hi=contours.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(contours[mid].start<=dist)lo=mid;else hi=mid-1;}
+        const c=contours[lo],local=dist-c.start,pt=c.p.getPointAtLength(local);
+        const x=c.x+pt.x*size,y=c.base+pt.y*size,fade=Math.min(1,local/FADE,(c.len-local)/FADE);
+        /* Неоновий слід: контур «малюється» світлом за світлячком, пройдені контури повільно гаснуть. */
+        contours.forEach((o,i)=>{if(i<lo)setTrace(o,Math.max(0,o.glow-dt/1.2),'none');});
+        setTrace(c,1,local.toFixed(4)+' '+(c.len+1).toFixed(4));
+        /* Мерехтіння: дві синусоїди різної частоти дають «живий» пульс. */
+        const twinkle=1+.16*Math.sin(elapsed*11)+.07*Math.sin(elapsed*23.7);
+        fly.setAttribute('transform','translate('+x.toFixed(2)+' '+y.toFixed(2)+') scale('+twinkle.toFixed(3)+')');
+        fly.style.opacity=fade.toFixed(3);halos[0].style.fill=c.color;
+        emit+=dt*26*fade;while(emit>=1){emit--;spawn(x,y,Math.random()<.5?'#fff':c.color);}
+      }else{
+        /* Фінал: усе ім'я спалахує неоновим підписом і гасне. */
+        const f=(phase-travel)/FINALE,glow=f<.15?f/.15:Math.pow(1-(f-.15)/.85,1.6);
+        fly.style.opacity='0';
+        if(!finaleBurst){finaleBurst=true;contours.forEach(c=>{for(let k=0;k<2;k++){const pt=c.p.getPointAtLength(Math.random()*c.len);spawn(c.x+pt.x*size,c.base+pt.y*size,c.color,1.4);}});}
+        contours.forEach(c=>setTrace(c,glow,'none'));
+      }
+      sparks.forEach(sp=>{
+        if(sp.life<=0)return;
+        sp.life-=dt;if(sp.life<=0){sp.el.style.display='none';return;}
+        const drag=Math.exp(-2.4*dt);sp.vx*=drag;sp.vy=sp.vy*drag-size*.12*dt;sp.x+=sp.vx*dt;sp.y+=sp.vy*dt;
+        const k=sp.life/sp.max;sp.el.setAttribute('cx',sp.x.toFixed(2));sp.el.setAttribute('cy',sp.y.toFixed(2));
+        sp.el.setAttribute('r',(radius*.5*k+.3).toFixed(2));sp.el.style.opacity=k.toFixed(3);
+      });
       frame=requestAnimationFrame(step);
     };
-    const start=()=>{if(!frame&&visible&&!reduced.matches)frame=requestAnimationFrame(step);};
+    const start=()=>{if(!frame&&visible&&!reduced.matches){last=performance.now();frame=requestAnimationFrame(step);}};
     fit();document.fonts?.ready.then(fit);
     if('ResizeObserver' in window)new ResizeObserver(fit).observe(title);else addEventListener('resize',fit);
     /* Поза екраном анімація стоїть, щоб не витрачати батарею. */
