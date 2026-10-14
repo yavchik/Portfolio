@@ -268,7 +268,7 @@ function renderProjectCard(C,p,i){
               <div class="pf-hero-action"><p class="pf-eyebrow">${E(C.hero.buttonNote)}</p>${pfLink(C.hero.buttonLabel,C.hero.buttonUrl,'pf-contact-button')}<a class="pf-scroll-link" href="${E(pfUrl(C.hero.scrollUrl))}">${E(C.hero.scrollLabel)}<span aria-hidden="true">↓</span></a></div>
             </div>
           </div>
-          <div class="pf-marquee" aria-label="${E(C.hero.marquee.join(', '))}"><div class="pf-marquee-track" aria-hidden="true">${marquee.repeat(3)}</div></div>
+          <div class="pf-marquee" aria-label="${E(C.hero.marquee.join(', '))}"><div class="pf-marquee-track" aria-hidden="true">${marquee.repeat(4)}</div></div>
         </section>
         <section class="pf-work pf-shell" id="pf-work" aria-labelledby="pf-work-title">
           <div class="pf-about" id="pf-about"><p class="pf-eyebrow">${E(C.about.label)}</p><div><p class="pf-about-copy"><span class="pf-sr">${E(C.about.text)}</span><span aria-hidden="true">${C.about.text.split(/\s+/).map(word=>'<span class="pf-word">'+E(word)+'</span>').join(' ')}</span></p><p class="pf-about-note">${E(C.about.note)}</p></div></div>
@@ -795,15 +795,22 @@ function renderProjectCard(C,p,i){
 
     /* Блискавка: розряди біжать контуром літер, смуга проходить зліва направо. */
     .pf-bolt{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-    .pf-bolt text{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:var(--pf-bolt-dash) var(--pf-bolt-gap);animation:pf-bolt-run 1.3s linear infinite}
+    .pf-bolt text{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:var(--pf-bolt-dash) var(--pf-bolt-gap);animation:pf-bolt-run 2.8s linear infinite}
     .pf-bolt-glow{stroke:var(--pf-accent);stroke-width:calc(var(--pf-bolt-w) * 5)}
-    .pf-bolt-core{stroke:#fff;stroke-width:calc(var(--pf-bolt-w) * 2.6);animation:pf-bolt-run 1.3s linear infinite,pf-bolt-flicker .45s steps(1) infinite!important}
-    .pf-bolt-sweep{transform-box:fill-box;animation:pf-bolt-sweep 6.5s cubic-bezier(.55,0,.45,1) 1.4s infinite}
+    .pf-bolt-core{stroke:#fff;stroke-width:calc(var(--pf-bolt-w) * 2.6);animation:pf-bolt-run 2.8s linear infinite,pf-bolt-flicker .9s steps(1) infinite!important}
+    .pf-bolt-sweep{transform-box:fill-box;animation:pf-bolt-sweep 4.5s linear 1.4s infinite}
     .pf-bolt text.pf-bolt-hole{fill:#000;stroke:none;animation:none}
     @keyframes pf-bolt-run{to{stroke-dashoffset:var(--pf-bolt-run)}}
     @keyframes pf-bolt-flicker{0%{opacity:1}30%{opacity:.55}38%{opacity:1}70%{opacity:.8}}
-    @keyframes pf-bolt-sweep{0%{transform:translateX(0)}32%,100%{transform:translateX(390%)}}
+    @keyframes pf-bolt-sweep{from{transform:translateX(0)}to{transform:translateX(var(--pf-bolt-travel))}}
     @media(prefers-reduced-motion:reduce){.pf-bolt{display:none}}
+
+    /* Біжуча стрічка по колу. Текст повторено 4 рази; відступ у кінці дорівнює gap, тож зсув на чверть — рівно один повний цикл без стрибка.
+       Рух іде через translate, а зсув під час прокрутки — через transform, тому ефекти додаються. */
+    .pf-marquee-track{--pf-marquee-gap:34px;gap:var(--pf-marquee-gap);padding-right:var(--pf-marquee-gap);animation:pf-marquee-loop 32s linear infinite}
+    @media(hover:hover){.pf-marquee:hover .pf-marquee-track{animation-play-state:paused}}
+    @keyframes pf-marquee-loop{from{translate:0 0}to{translate:-25% 0}}
+    @media(max-width:760px){.pf-marquee-track{--pf-marquee-gap:25px;animation-duration:24s}}
     @media print{.pf-bolt{display:none}}
 </style>
 </head>
@@ -823,7 +830,7 @@ function renderProjectCard(C,p,i){
               <div class="pf-hero-action"><p class="pf-eyebrow">ВАША ІДЕЯ. МОЯ РЕАЛІЗАЦІЯ.</p><a class="pf-contact-button" href="#pf-contact"><span>Обговорити проєкт</span><span class="pf-arrow" aria-hidden="true">↗</span></a><a class="pf-scroll-link" href="#pf-work">Далі — мої роботи<span aria-hidden="true">↓</span></a></div>
             </div>
           </div>
-          <div class="pf-marquee" aria-label="СТРУКТУРА, ДИЗАЙН, РОЗРОБКА, ВАШ НОВИЙ САЙТ"><div class="pf-marquee-track" aria-hidden="true"><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span></div></div>
+          <div class="pf-marquee" aria-label="СТРУКТУРА, ДИЗАЙН, РОЗРОБКА, ВАШ НОВИЙ САЙТ"><div class="pf-marquee-track" aria-hidden="true"><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span></div></div>
         </section>
         <section class="pf-work pf-shell" id="pf-work" aria-labelledby="pf-work-title">
           <div class="pf-about" id="pf-about"><p class="pf-eyebrow">ПРО МЕНЕ</p><div><p class="pf-about-copy"><span class="pf-sr">Я Влад. Перетворюю вашу ідею на сайт із чіткою структурою, виразним дизайном і простим шляхом до заявки.</span><span aria-hidden="true"><span class="pf-word">Я</span> <span class="pf-word">Влад.</span> <span class="pf-word">Перетворюю</span> <span class="pf-word">вашу</span> <span class="pf-word">ідею</span> <span class="pf-word">на</span> <span class="pf-word">сайт</span> <span class="pf-word">із</span> <span class="pf-word">чіткою</span> <span class="pf-word">структурою,</span> <span class="pf-word">виразним</span> <span class="pf-word">дизайном</span> <span class="pf-word">і</span> <span class="pf-word">простим</span> <span class="pf-word">шляхом</span> <span class="pf-word">до</span> <span class="pf-word">заявки.</span></span></p><p class="pf-about-note">Продумую кожен екран: що людина побачить, зрозуміє і зробить далі.</p></div></div>
@@ -894,12 +901,12 @@ function renderProjectCard(C,p,i){
     svg.setAttribute('class','pf-bolt');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
     svg.innerHTML='<defs>'
       +'<filter id="pf-bolt-zap" x="-10%" y="-40%" width="120%" height="180%">'
-      +'<feTurbulence type="turbulence" baseFrequency="0.09" numOctaves="2" seed="2" result="noise"><animate attributeName="seed" values="1;6;3;8;4;9;2;7" dur="0.48s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>'
+      +'<feTurbulence type="turbulence" baseFrequency="0.09" numOctaves="2" seed="2" result="noise"><animate attributeName="seed" values="1;6;3;8;4;9;2;7" dur="0.96s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence>'
       +'<feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="zap"/>'
       +'<feGaussianBlur in="zap" stdDeviation="2.5" result="glow"/><feGaussianBlur in="zap" stdDeviation="9" result="aura"/>'
       +'<feMerge><feMergeNode in="aura"/><feMergeNode in="glow"/><feMergeNode in="glow"/><feMergeNode in="zap"/></feMerge></filter>'
       +'<linearGradient id="pf-bolt-band"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff"/><stop offset=".8" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
-      +'<mask id="pf-bolt-mask" maskUnits="userSpaceOnUse" x="-10%" y="-50%" width="120%" height="200%"><rect class="pf-bolt-sweep" x="-35%" y="-50%" width="35%" height="200%" fill="url(#pf-bolt-band)"/></mask>'
+      +'<mask id="pf-bolt-mask" maskUnits="userSpaceOnUse" x="-10%" y="-50%" width="120%" height="200%"><rect class="pf-bolt-sweep" x="-35%" y="-50%" width="30%" height="200%" fill="url(#pf-bolt-band)"/></mask>'
       +'<mask id="pf-bolt-knock" maskUnits="userSpaceOnUse" x="-10%" y="-50%" width="120%" height="200%"><rect x="-10%" y="-50%" width="120%" height="200%" fill="#fff"/><text class="pf-bolt-hole">'+label+'</text></mask>'
       +'</defs><g mask="url(#pf-bolt-mask)"><g filter="url(#pf-bolt-zap)"><g mask="url(#pf-bolt-knock)">'
       +'<text class="pf-bolt-glow">'+label+'</text><text class="pf-bolt-core">'+label+'</text></g></g></g>';
@@ -911,6 +918,10 @@ function renderProjectCard(C,p,i){
       const range=document.createRange();range.selectNodeContents(textNode);
       const tr=range.getBoundingClientRect(),sr=svg.getBoundingClientRect(),bb=texts[0].getBBox();
       texts.forEach(t=>{t.setAttribute('x',tr.left-sr.left-bb.x);t.setAttribute('y',tr.top-sr.top-bb.y);});
+      /* Смуга руху займає 30% ширини тексту й ходить точно від першої до останньої літери — без паузи між проходами. */
+      const tb=texts[0].getBBox(),band=tb.width*.3,sweep=svg.querySelector('.pf-bolt-sweep');
+      sweep.setAttribute('x',tb.x-band*.7);sweep.setAttribute('width',band);
+      svg.style.setProperty('--pf-bolt-travel',(tb.width+band*.4)+'px');
       const dash=size*.6,gap=size*.9;
       svg.style.setProperty('--pf-bolt-dash',dash+'px');svg.style.setProperty('--pf-bolt-gap',gap+'px');
       svg.style.setProperty('--pf-bolt-run',-(dash+gap)+'px');svg.style.setProperty('--pf-bolt-w',Math.max(1,size*.012)+'px');
