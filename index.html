@@ -268,7 +268,7 @@ function renderProjectCard(C,p,i){
               <div class="pf-hero-action"><p class="pf-eyebrow">${E(C.hero.buttonNote)}</p>${pfLink(C.hero.buttonLabel,C.hero.buttonUrl,'pf-contact-button')}<a class="pf-scroll-link" href="${E(pfUrl(C.hero.scrollUrl))}">${E(C.hero.scrollLabel)}<span aria-hidden="true">↓</span></a></div>
             </div>
           </div>
-          <div class="pf-marquee" aria-label="${E(C.hero.marquee.join(', '))}"><div class="pf-marquee-track" aria-hidden="true">${marquee.repeat(3)}</div></div>
+          <div class="pf-marquee" aria-label="${E(C.hero.marquee.join(', '))}"><div class="pf-marquee-track" aria-hidden="true">${marquee.repeat(4)}</div></div>
         </section>
         <section class="pf-work pf-shell" id="pf-work" aria-labelledby="pf-work-title">
           <div class="pf-about" id="pf-about"><p class="pf-eyebrow">${E(C.about.label)}</p><div><p class="pf-about-copy"><span class="pf-sr">${E(C.about.text)}</span><span aria-hidden="true">${C.about.text.split(/\s+/).map(word=>'<span class="pf-word">'+E(word)+'</span>').join(' ')}</span></p><p class="pf-about-note">${E(C.about.note)}</p></div></div>
@@ -804,6 +804,13 @@ function renderProjectCard(C,p,i){
     @keyframes pf-bolt-flicker{0%{opacity:1}30%{opacity:.55}38%{opacity:1}70%{opacity:.8}}
     @keyframes pf-bolt-sweep{from{transform:translateX(0)}to{transform:translateX(var(--pf-bolt-travel))}}
     @media(prefers-reduced-motion:reduce){.pf-bolt{display:none}}
+
+    /* Біжуча стрічка по колу. Текст повторено 4 рази; відступ у кінці дорівнює gap, тож зсув на чверть — рівно один повний цикл без стрибка.
+       Рух іде через translate, а зсув під час прокрутки — через transform, тому ефекти додаються. */
+    .pf-marquee-track{--pf-marquee-gap:34px;gap:var(--pf-marquee-gap);padding-right:var(--pf-marquee-gap);animation:pf-marquee-loop 32s linear infinite}
+    @media(hover:hover){.pf-marquee:hover .pf-marquee-track{animation-play-state:paused}}
+    @keyframes pf-marquee-loop{from{translate:0 0}to{translate:-25% 0}}
+    @media(max-width:760px){.pf-marquee-track{--pf-marquee-gap:25px;animation-duration:24s}}
     @media print{.pf-bolt{display:none}}
 </style>
 </head>
@@ -823,7 +830,7 @@ function renderProjectCard(C,p,i){
               <div class="pf-hero-action"><p class="pf-eyebrow">ВАША ІДЕЯ. МОЯ РЕАЛІЗАЦІЯ.</p><a class="pf-contact-button" href="#pf-contact"><span>Обговорити проєкт</span><span class="pf-arrow" aria-hidden="true">↗</span></a><a class="pf-scroll-link" href="#pf-work">Далі — мої роботи<span aria-hidden="true">↓</span></a></div>
             </div>
           </div>
-          <div class="pf-marquee" aria-label="СТРУКТУРА, ДИЗАЙН, РОЗРОБКА, ВАШ НОВИЙ САЙТ"><div class="pf-marquee-track" aria-hidden="true"><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span></div></div>
+          <div class="pf-marquee" aria-label="СТРУКТУРА, ДИЗАЙН, РОЗРОБКА, ВАШ НОВИЙ САЙТ"><div class="pf-marquee-track" aria-hidden="true"><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>СТРУКТУРА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ДИЗАЙН</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>РОЗРОБКА</span><span class="pf-marquee-separator" aria-hidden="true">/</span><span>ВАШ НОВИЙ САЙТ</span><span class="pf-marquee-separator" aria-hidden="true">/</span></div></div>
         </section>
         <section class="pf-work pf-shell" id="pf-work" aria-labelledby="pf-work-title">
           <div class="pf-about" id="pf-about"><p class="pf-eyebrow">ПРО МЕНЕ</p><div><p class="pf-about-copy"><span class="pf-sr">Я Влад. Перетворюю вашу ідею на сайт із чіткою структурою, виразним дизайном і простим шляхом до заявки.</span><span aria-hidden="true"><span class="pf-word">Я</span> <span class="pf-word">Влад.</span> <span class="pf-word">Перетворюю</span> <span class="pf-word">вашу</span> <span class="pf-word">ідею</span> <span class="pf-word">на</span> <span class="pf-word">сайт</span> <span class="pf-word">із</span> <span class="pf-word">чіткою</span> <span class="pf-word">структурою,</span> <span class="pf-word">виразним</span> <span class="pf-word">дизайном</span> <span class="pf-word">і</span> <span class="pf-word">простим</span> <span class="pf-word">шляхом</span> <span class="pf-word">до</span> <span class="pf-word">заявки.</span></span></p><p class="pf-about-note">Продумую кожен екран: що людина побачить, зрозуміє і зробить далі.</p></div></div>
