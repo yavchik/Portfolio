@@ -218,6 +218,19 @@
     "stackPeek": 18, /* ЗМІНИТИ */
     "stackSpacing": 96 /* ЗМІНИТИ */
   },
+  "process": { /* ЗМІНИТИ */
+    "eyebrow": "ЯК МИ ПРАЦЮЄМО", /* ЗМІНИТИ */
+    "title": "Етапи роботи", /* ЗМІНИТИ */
+    "description": "П’ять зрозумілих кроків від першої розмови до сайту, що приймає заявки. На кожному етапі ви бачите результат і погоджуєте його.", /* ЗМІНИТИ */
+    "resultLabel": "Результат", /* ЗМІНИТИ */
+    "steps": [ /* ЗМІНИТИ */
+      { "title": "Знайомство", "text": "Обговорюємо ваш бізнес, клієнтів і цілі сайту. Ставлю запитання, щоб зрозуміти задачу, і пропоную рішення.", "result": "Зрозуміла задача, терміни й вартість" }, /* ЗМІНИТИ */
+      { "title": "Структура", "text": "Продумую, з яких блоків складається сайт і як відвідувач дійде до заявки. Разом збираємо тексти й матеріали.", "result": "Карта сайту й тексти" }, /* ЗМІНИТИ */
+      { "title": "Дизайн", "text": "Малюю макет для комп’ютера й телефону у стилі вашого бренду. Ви дивитеся, коментуєте, я вношу правки.", "result": "Погоджений макет" }, /* ЗМІНИТИ */
+      { "title": "Розробка", "text": "Верстаю сайт, додаю анімації, форму заявки й адаптацію під усі екрани. Перевіряю швидкість і зручність.", "result": "Робочий сайт на тестовому посиланні" }, /* ЗМІНИТИ */
+      { "title": "Запуск", "text": "Підключаю домен, аналітику та сповіщення про заявки. Після запуску допомагаю з правками.", "result": "Сайт онлайн, заявки йдуть вам" } /* ЗМІНИТИ */
+    ]
+  },
   "contact": { /* ЗМІНИТИ */
     "eyebrow": "НАСТУПНИЙ ПРОЄКТ — ВАШ", /* ЗМІНИТИ */
     "title": "Є ІДЕЯ?\nЗРОБІМО САЙТ.", /* ЗМІНИТИ */
@@ -302,6 +315,11 @@ function renderProjectCard(C,p,i){
   <p class="pf-project-description">${E(p.description)}</p>
  </article>`;
 }
+  function renderProcess(C) {
+    const E = pfEscape, P = C.process;
+    const steps = P.steps.map((step,i)=>`<li class="pf-step pf-reveal" style="--pf-index:${i}"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">${String(i+1).padStart(2,'0')}</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>${E(step.title)}</h3><p>${E(step.text)}</p><p class="pf-step-result"><span>${E(P.resultLabel)}</span>${E(step.result)}</p></li>`).join('');
+    return `<section class="pf-process pf-shell" id="pf-process" aria-labelledby="pf-process-title"><div class="pf-process-heading pf-reveal"><p class="pf-eyebrow">${E(P.eyebrow)}</p><h2 class="pf-section-title pf-metal-text" id="pf-process-title">${E(P.title)}</h2><p>${E(P.description)}</p></div><ol class="pf-steps">${steps}</ol></section>`;
+  }
   function renderPortfolio(C) {
     const E = pfEscape;
     const h = C.headingLevel === 'h2' ? 'h2' : 'h1';
@@ -326,6 +344,7 @@ function renderProjectCard(C,p,i){
           <div class="pf-work-heading pf-reveal"><p class="pf-eyebrow">${E(C.work.eyebrow)}</p><h2 class="pf-section-title pf-metal-text" id="pf-work-title">${E(C.work.title)}</h2><p>${E(C.work.description)}</p></div>
           <div class="pf-project-list">${cards}</div>
         </section>
+        ${renderProcess(C)}
         <section class="pf-contact" id="pf-contact" aria-labelledby="pf-contact-title"><div class="pf-shell"><div class="pf-contact-top"><p class="pf-eyebrow">${E(C.contact.eyebrow)}</p><p>${E(C.contact.note)}</p></div><div class="pf-contact-grid"><h2 class="pf-contact-title pf-reveal" id="pf-contact-title">${E(C.contact.title)}</h2><div class="pf-contact-copy"><p>${E(C.contact.description)}</p><button class="pf-contact-button" type="button" data-open-form aria-haspopup="dialog" aria-controls="pf-request-dialog"><span>${E(C.contact.buttonLabel)}</span><span class="pf-arrow" aria-hidden="true">↗</span></button><noscript><p class="pf-form-nojs">${E(C.form.noScriptMessage)}</p></noscript></div></div></div></section>
       </main>
       <footer class="pf-footer"><div class="pf-shell"><span>© ${new Date().getFullYear()} ${E(C.footer.copyright)}</span><a href="${E(pfUrl(C.footer.backUrl))}">${E(C.footer.backLabel)} <span aria-hidden="true">↑</span></a></div></footer>
@@ -881,6 +900,20 @@ function renderProjectCard(C,p,i){
     }
     @media(max-width:360px){.pf-magnet{width:min(100%,var(--pf-portrait-max),420px,max(170px,calc(100svh - 425px)))}}
     @media print{.pf-bolt{display:none}}
+    /* Етапи роботи */
+    .pf-process{padding:40px 0 130px;scroll-margin-top:40px}.pf-process-heading{display:grid;grid-template-columns:1fr minmax(0,440px);gap:20px 60px;align-items:end;margin-bottom:56px}.pf-process-heading>.pf-eyebrow{grid-column:1/-1}.pf-process-heading>.pf-section-title{margin:0}.pf-process-heading>p:last-child{font-size:.9375rem;color:var(--pf-muted);padding-bottom:14px}
+    .pf-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;counter-reset:pf-step}
+    .pf-step{position:relative;display:flex;flex-direction:column;background:var(--pf-surface);border:1px solid var(--pf-line);border-radius:26px;padding:26px 24px 24px;transition:border-color var(--pf-hover),transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s ease,opacity var(--pf-reveal);transition-delay:0s,0s,0s,calc(var(--pf-index)*90ms)}
+    .pf-step.pf-reveal.is-pending{transform:translateY(30px)}.pf-step:hover{border-color:var(--pf-buttonBorder);transform:translateY(-6px);box-shadow:0 18px 50px var(--pf-buttonGlow)}
+    .pf-step-head{display:flex;align-items:center;gap:14px;margin-bottom:34px}.pf-step-number{font:800 3.4rem/.9 var(--pf-heading);letter-spacing:-.05em;background:linear-gradient(180deg,var(--pf-headingStart),var(--pf-headingEnd) 88%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;transition:filter var(--pf-hover)}
+    .pf-step-dot{flex:1;height:1px;background:linear-gradient(90deg,var(--pf-line),transparent);position:relative}.pf-step-dot::before{content:"";position:absolute;left:0;top:50%;width:9px;height:9px;border-radius:50%;transform:translate(-2px,-50%);background:var(--pf-accent);box-shadow:0 0 0 4px #BDA8FF1F,0 0 14px var(--pf-accent)}
+    .pf-step:hover .pf-step-number{filter:drop-shadow(0 0 14px #BDA8FF66)}
+    .pf-step h3{font-size:clamp(1.45rem,1.7vw,1.9rem);font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-bottom:14px}.pf-step>p{font-size:.875rem;line-height:1.6;color:var(--pf-muted)}
+    .pf-step>p.pf-step-result{margin-top:auto;padding-top:22px;color:var(--pf-text);font-weight:600;font-size:.8125rem;line-height:1.45}.pf-step-result>span{display:block;padding-top:16px;border-top:1px solid var(--pf-line);margin-bottom:6px;font-weight:500;font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pf-accent)}
+    @media(max-width:1250px){.pf-steps{grid-template-columns:repeat(6,minmax(0,1fr))}.pf-step{grid-column:span 2}.pf-step:nth-child(4){grid-column:2/span 2}}
+    @media(max-width:900px){.pf-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.pf-step,.pf-step:nth-child(4){grid-column:auto}.pf-step:last-child{grid-column:1/-1}.pf-process-heading{grid-template-columns:1fr}.pf-process-heading>p:last-child{padding-bottom:0}}
+    @media(max-width:760px){.pf-process{padding:10px 0 75px}.pf-process-heading{margin-bottom:32px;gap:13px}.pf-steps{grid-template-columns:1fr;gap:14px}.pf-step:last-child{grid-column:auto}.pf-step{padding:22px 20px 20px;border-radius:22px}.pf-step-head{margin-bottom:20px}.pf-step-number{font-size:2.8rem}}
+
 </style>
 </head>
 <body>
@@ -956,6 +989,7 @@ function renderProjectCard(C,p,i){
   <p class="pf-project-description">Сайт клінінгового сервісу: послуги, ціни та замовлення прибирання.</p>
  </article></div>
         </section>
+        <section class="pf-process pf-shell" id="pf-process" aria-labelledby="pf-process-title"><div class="pf-process-heading pf-reveal"><p class="pf-eyebrow">ЯК МИ ПРАЦЮЄМО</p><h2 class="pf-section-title pf-metal-text" id="pf-process-title">Етапи роботи</h2><p>П’ять зрозумілих кроків від першої розмови до сайту, що приймає заявки. На кожному етапі ви бачите результат і погоджуєте його.</p></div><ol class="pf-steps"><li class="pf-step pf-reveal" style="--pf-index:0"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">01</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>Знайомство</h3><p>Обговорюємо ваш бізнес, клієнтів і цілі сайту. Ставлю запитання, щоб зрозуміти задачу, і пропоную рішення.</p><p class="pf-step-result"><span>Результат</span>Зрозуміла задача, терміни й вартість</p></li><li class="pf-step pf-reveal" style="--pf-index:1"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">02</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>Структура</h3><p>Продумую, з яких блоків складається сайт і як відвідувач дійде до заявки. Разом збираємо тексти й матеріали.</p><p class="pf-step-result"><span>Результат</span>Карта сайту й тексти</p></li><li class="pf-step pf-reveal" style="--pf-index:2"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">03</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>Дизайн</h3><p>Малюю макет для комп’ютера й телефону у стилі вашого бренду. Ви дивитеся, коментуєте, я вношу правки.</p><p class="pf-step-result"><span>Результат</span>Погоджений макет</p></li><li class="pf-step pf-reveal" style="--pf-index:3"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">04</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>Розробка</h3><p>Верстаю сайт, додаю анімації, форму заявки й адаптацію під усі екрани. Перевіряю швидкість і зручність.</p><p class="pf-step-result"><span>Результат</span>Робочий сайт на тестовому посиланні</p></li><li class="pf-step pf-reveal" style="--pf-index:4"><div class="pf-step-head"><span class="pf-step-number" aria-hidden="true">05</span><span class="pf-step-dot" aria-hidden="true"></span></div><h3>Запуск</h3><p>Підключаю домен, аналітику та сповіщення про заявки. Після запуску допомагаю з правками.</p><p class="pf-step-result"><span>Результат</span>Сайт онлайн, заявки йдуть вам</p></li></ol></section>
         <section class="pf-contact" id="pf-contact" aria-labelledby="pf-contact-title"><div class="pf-shell"><div class="pf-contact-top"><p class="pf-eyebrow">НАСТУПНИЙ ПРОЄКТ — ВАШ</p><p>Vlad Yavorsky / Дизайн і розробка</p></div><div class="pf-contact-grid"><h2 class="pf-contact-title pf-reveal" id="pf-contact-title">Є ІДЕЯ?
 ЗРОБІМО САЙТ.</h2><div class="pf-contact-copy"><p>Напишіть, чим займається ваш бізнес і який сайт потрібен. Обговоримо задачу, терміни та вартість.</p><button class="pf-contact-button" type="button" data-open-form aria-haspopup="dialog" aria-controls="pf-request-dialog"><span>Написати Владу</span><span class="pf-arrow" aria-hidden="true">↗</span></button><noscript><p class="pf-form-nojs">Для надсилання заявки увімкніть JavaScript у браузері.</p></noscript></div></div></div></section>
       </main>
