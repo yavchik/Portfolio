@@ -250,6 +250,8 @@
     "namePlaceholder": "Як до вас звертатися?", /* ЗМІНИТИ */
     "phoneLabel": "Телефон", /* ЗМІНИТИ */
     "phonePlaceholder": "+380 …", /* ЗМІНИТИ */
+    "contactLabel": "Як з вами зв’язатися?", /* ЗМІНИТИ */
+    "contactMethods": ["Дзвінок", "Telegram", "Viber"], /* ЗМІНИТИ: перший варіант обрано за замовчуванням */
     "commentLabel": "Коментар", /* ЗМІНИТИ */
     "commentPlaceholder": "Який сайт потрібен? Що важливо врахувати?", /* ЗМІНИТИ */
     "optionalLabel": "необов’язково", /* ЗМІНИТИ */
@@ -338,6 +340,7 @@ function renderProjectCard(C,p,i){
           <fieldset class="pf-form-fields">
             <div class="pf-form-field"><label for="pf-username">${E(C.form.nameLabel)}</label><input id="pf-username" name="Ім'я" type="text" autocomplete="name" required minlength="2" maxlength="80" placeholder="${E(C.form.namePlaceholder)}" autofocus></div>
             <div class="pf-form-field"><label for="pf-phone">${E(C.form.phoneLabel)}</label><input id="pf-phone" name="Телефон" type="tel" inputmode="tel" autocomplete="tel" required maxlength="32" placeholder="${E(C.form.phonePlaceholder)}"></div>
+            <fieldset class="pf-form-field pf-form-choice"><legend>${E(C.form.contactLabel)}</legend><div class="pf-choice-list">${(C.form.contactMethods||[]).map((m,i)=>`<label class="pf-choice"><input type="radio" name="Спосіб зв'язку" value="${E(m)}"${i===0?' checked':''}><span>${E(m)}</span></label>`).join('')}</div></fieldset>
             <div class="pf-form-field"><label for="pf-comment">${E(C.form.commentLabel)} <span>(${E(C.form.optionalLabel)})</span></label><textarea id="pf-comment" name="Коментар" rows="4" maxlength="1500" placeholder="${E(C.form.commentPlaceholder)}"></textarea></div>
             <div class="pf-form-trap" aria-hidden="true"><label for="pf-company">${E(C.form.honeypotLabel)}</label><input id="pf-company" name="company" type="text" tabindex="-1" autocomplete="off"></div>
             <button class="pf-contact-button pf-form-submit" type="submit"><span data-submit-label>${E(C.form.submitLabel)}</span><span class="pf-arrow" aria-hidden="true">↗</span></button>
@@ -549,6 +552,7 @@ function renderProjectCard(C,p,i){
       const payload = {
         "Ім'я": nameInput.value.trim(),
         "Телефон": phone,
+        "Спосіб зв'язку": form.querySelector('input[name="Спосіб зв\'язку"]:checked')?.value || '',
         "Коментар": form.elements.namedItem("Коментар").value.trim(),
         company: form.elements.namedItem('company').value.trim()
       };
@@ -562,6 +566,7 @@ function renderProjectCard(C,p,i){
         form.elements.namedItem("Ім'я").value = payload["Ім'я"];
         form.elements.namedItem("Телефон").value = payload["Телефон"];
         form.elements.namedItem("Коментар").value = payload["Коментар"];
+        form.querySelectorAll('input[name="Спосіб зв\'язку"]').forEach(r => { r.checked = r.value === payload["Спосіб зв'язку"]; });
       };
       const unlock = () => {
         sending = false;
@@ -730,6 +735,15 @@ function renderProjectCard(C,p,i){
     .pf-form-status[data-state="error"]{color:var(--pf-formError)}
     .pf-form-status:focus{outline:none}
     .pf-request-dialog button:disabled,.pf-form-fields:disabled{opacity:.65;cursor:wait}
+    .pf-form-choice{border:0;padding:0;margin:0}
+    .pf-form-choice legend{padding:0;margin-bottom:8px;font-size:.9375rem;font-weight:600}
+    .pf-choice-list{display:flex;flex-wrap:wrap;gap:8px}
+    .pf-choice{position:relative;cursor:pointer}
+    .pf-choice input{position:absolute;opacity:0;width:1px;height:1px}
+    .pf-form-field .pf-choice span{display:inline-flex;align-items:center;min-height:44px;padding:10px 18px;border:1px solid var(--pf-line);border-radius:999px;background:var(--pf-formField);color:var(--pf-text);font-size:.9375rem;transition:background var(--pf-hover),color var(--pf-hover),border-color var(--pf-hover)}
+    .pf-form-field .pf-choice:hover span{border-color:var(--pf-muted)}
+    .pf-form-field .pf-choice input:checked+span{background:var(--pf-text);color:var(--pf-background);border-color:var(--pf-text)}
+    .pf-choice input:focus-visible+span{outline:2px solid var(--pf-accent);outline-offset:2px}
     .pf-form-trap{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);pointer-events:none}
     .pf-form-nojs{font-size:.875rem;margin-top:12px;color:var(--pf-contactMuted)}
     @media(max-width:480px){.pf-request-dialog{padding:22px 18px;border-radius:18px}.pf-dialog-top h2{font-size:1.85rem}.pf-form-description{margin-block:15px 20px}}
@@ -1015,6 +1029,7 @@ function renderProjectCard(C,p,i){
           <fieldset class="pf-form-fields">
             <div class="pf-form-field"><label for="pf-username">Ім’я</label><input id="pf-username" name="Ім'я" type="text" autocomplete="name" required minlength="2" maxlength="80" placeholder="Як до вас звертатися?" autofocus></div>
             <div class="pf-form-field"><label for="pf-phone">Телефон</label><input id="pf-phone" name="Телефон" type="tel" inputmode="tel" autocomplete="tel" required maxlength="32" placeholder="+380 …"></div>
+            <fieldset class="pf-form-field pf-form-choice"><legend>Як з вами зв’язатися?</legend><div class="pf-choice-list"><label class="pf-choice"><input type="radio" name="Спосіб зв'язку" value="Дзвінок" checked><span>Дзвінок</span></label><label class="pf-choice"><input type="radio" name="Спосіб зв'язку" value="Telegram"><span>Telegram</span></label><label class="pf-choice"><input type="radio" name="Спосіб зв'язку" value="Viber"><span>Viber</span></label></div></fieldset>
             <div class="pf-form-field"><label for="pf-comment">Коментар <span>(необов’язково)</span></label><textarea id="pf-comment" name="Коментар" rows="4" maxlength="1500" placeholder="Який сайт потрібен? Що важливо врахувати?"></textarea></div>
             <div class="pf-form-trap" aria-hidden="true"><label for="pf-company">Залиште це поле порожнім</label><input id="pf-company" name="company" type="text" tabindex="-1" autocomplete="off"></div>
             <button class="pf-contact-button pf-form-submit" type="submit"><span data-submit-label>Надіслати заявку</span><span class="pf-arrow" aria-hidden="true">↗</span></button>
