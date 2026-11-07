@@ -556,6 +556,18 @@ function renderProjectCard(C,p,i){
         "Коментар": form.elements.namedItem("Коментар").value.trim(),
         company: form.elements.namedItem('company').value.trim()
       };
+      /* Дані для Conversions API: Apps Script шле той самий Lead на сервер Meta з тим самим event_id,
+         тож Meta зливає дві копії в одну подію. У таблицю ці поля не потрапляють (скрипт пише лише колонки з шапки). */
+      const eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+      const cookie = name => (document.cookie.match('(?:^|; )' + name + '=([^;]*)') || [])[1] || '';
+      const fbclid = new URLSearchParams(location.search).get('fbclid');
+      Object.assign(payload, {
+        event_id: eventId,
+        fbp: cookie('_fbp'),
+        fbc: cookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : ''),
+        page_url: location.href.split('#')[0],
+        user_agent: navigator.userAgent
+      });
       sending = true;
       fieldset.disabled = true;
       closeButton.disabled = true;
@@ -579,7 +591,7 @@ function renderProjectCard(C,p,i){
       const succeed = () => {
         form.reset();
         showStatus(C.form.successMessage, 'success');
-        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead', {}, { eventID: eventId });
       };
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.min(45000, Math.max(15000, Number(C.form.timeoutMs) || 25000)));
