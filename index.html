@@ -266,7 +266,8 @@
     "rateLimitMessage": "Забагато спроб. Зачекайте хвилину та спробуйте знову.", /* ЗМІНИТИ */
     "honeypotLabel": "Залиште це поле порожнім", /* ЗМІНИТИ */
     "noScriptMessage": "Для надсилання заявки увімкніть JavaScript у браузері.", /* ЗМІНИТИ */
-    "timeoutMs": 25000 /* ЗМІНИТИ */
+    "timeoutMs": 25000, /* ЗМІНИТИ */
+    "confirmMs": 4000 /* Скільки чекати відповіді сервера, перш ніж показати успіх і дочекатися відповіді у фоні */
   }
 };
 
@@ -497,7 +498,23 @@ function renderProjectCard(C,p,i){
       status.dataset.state = state;
     };
     const close = () => { if (!sending) dialog.close(); };
+    /* Google Apps Script «засинає» між запитами. Будимо його заздалегідь, щоб заявка не чекала холодного старту. */
+    let warmedUp = false;
+    const warmUp = () => {
+      if (warmedUp) return;
+      warmedUp = true;
+      try {
+        const url = new URL(C.form.endpoint);
+        if (url.protocol !== 'https:') return;
+        url.searchParams.set('warmup', '1');
+        fetch(url.href, { method: 'GET', mode: 'no-cors', credentials: 'omit', referrerPolicy: 'no-referrer', cache: 'no-store' }).catch(() => {});
+      } catch {}
+    };
+    document.querySelectorAll('[data-open-form]').forEach(button => {
+      ['pointerenter', 'focus', 'touchstart'].forEach(type => button.addEventListener(type, warmUp, { once: true, passive: true }));
+    });
     document.querySelectorAll('[data-open-form]').forEach(button => button.addEventListener('click', () => {
+      warmUp();
       opener = button;
       if (typeof window.fbq === 'function') window.fbq('track', 'Contact');
       if (!sending) showStatus('', '');
@@ -541,35 +558,65 @@ function renderProjectCard(C,p,i){
       form.setAttribute('aria-busy', 'true');
       submitLabel.textContent = C.form.sendingLabel;
       showStatus('', '');
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), Math.min(45000, Math.max(15000, Number(C.form.timeoutMs) || 25000)));
-      try {
-        const response = await fetch(endpoint.href, {
-          method: 'POST',
-          credentials: 'omit',
-          referrerPolicy: 'no-referrer',
-          body: new URLSearchParams(payload),
-          signal: controller.signal
-        });
-        const result = await response.json().catch(() => null);
-        if (!response.ok || result?.ok !== true) {
-          const message = response.status === 429 ? C.form.rateLimitMessage
-            : result?.code === 'delivery_unknown' ? C.form.unknownMessage : C.form.errorMessage;
-          showStatus(message, 'error');
-          return;
-        }
-        form.reset();
-        showStatus(C.form.successMessage, 'success');
-        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
-      } catch {
-        showStatus(C.form.unknownMessage, 'error');
-      } finally {
-        clearTimeout(timer);
+      const restore = () => {
+        form.elements.namedItem("Ім'я").value = payload["Ім'я"];
+        form.elements.namedItem("Телефон").value = payload["Телефон"];
+        form.elements.namedItem("Коментар").value = payload["Коментар"];
+      };
+      const unlock = () => {
         sending = false;
         fieldset.disabled = false;
         closeButton.disabled = false;
         form.removeAttribute('aria-busy');
         submitLabel.textContent = C.form.submitLabel;
+        status.focus();
+      };
+      const succeed = () => {
+        form.reset();
+        showStatus(C.form.successMessage, 'success');
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+      };
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), Math.min(45000, Math.max(15000, Number(C.form.timeoutMs) || 25000)));
+      /* keepalive: запит доходить до сервера, навіть якщо людина закрила вкладку одразу після успіху. */
+      const request = fetch(endpoint.href, {
+        method: 'POST',
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
+        body: new URLSearchParams(payload),
+        keepalive: true,
+        signal: controller.signal
+      }).then(async response => {
+        const result = await response.json().catch(() => null);
+        if (response.ok && result?.ok === true) return { ok: true };
+        const message = response.status === 429 ? C.form.rateLimitMessage
+          : result?.code === 'delivery_unknown' ? C.form.unknownMessage : C.form.errorMessage;
+        /* «Невідомо» означає, що заявку могли отримати: не повертаємо помилку, якщо вже показали успіх. */
+        return { ok: false, message, definite: result?.code !== 'delivery_unknown' };
+      }, () => ({ ok: false, message: C.form.unknownMessage, definite: false }))
+        .finally(() => clearTimeout(timer));
+      /* Сервер (Apps Script + Telegram) інколи відповідає 10–20 с. Тіло заявки на цей момент уже отримане,
+         тож не тримаємо людину: після короткого очікування показуємо успіх, а відповідь чекаємо у фоні. */
+      const confirmMs = Math.min(15000, Math.max(2000, Number(C.form.confirmMs) || 4000));
+      let waitTimer;
+      const early = await Promise.race([
+        request,
+        new Promise(resolve => { waitTimer = setTimeout(() => resolve(null), confirmMs); })
+      ]);
+      clearTimeout(waitTimer);
+      if (early) {
+        if (early.ok) succeed(); else showStatus(early.message, 'error');
+        unlock();
+        return;
+      }
+      succeed();
+      unlock();
+      const late = await request;
+      /* Явна відмова сервера (ліміт, помилка валідації): повертаємо дані у форму, щоб можна було повторити. */
+      if (!late.ok && late.definite) {
+        if (!form.elements.namedItem("Ім'я").value && !form.elements.namedItem("Телефон").value) restore();
+        showStatus(late.message, 'error');
+        if (!dialog.open) dialog.showModal();
         status.focus();
       }
     });
