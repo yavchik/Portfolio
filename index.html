@@ -6,6 +6,23 @@
   <title>Vlad Yavorsky — дизайн і розробка сайтів для бізнесу</title>
   <meta name="description" content="Vlad Yavorsky: розробка лендингів і сайтів для бізнесу. Структура, дизайн, адаптація під телефон і запуск. Обговорімо ваш проєкт.">
   <meta name="theme-color" content="#0B0C10">
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1013550578453874');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1013550578453874&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Vlad Yavorsky — дизайн і розробка сайтів для бізнесу">
   <meta property="og:description" content="Vlad Yavorsky: розробка лендингів і сайтів для бізнесу. Структура, дизайн, адаптація під телефон і запуск. Обговорімо ваш проєкт.">
@@ -482,6 +499,7 @@ function renderProjectCard(C,p,i){
     const close = () => { if (!sending) dialog.close(); };
     document.querySelectorAll('[data-open-form]').forEach(button => button.addEventListener('click', () => {
       opener = button;
+      if (typeof window.fbq === 'function') window.fbq('track', 'Contact');
       if (!sending) showStatus('', '');
       if (!dialog.open) dialog.showModal();
     }));
@@ -542,6 +560,7 @@ function renderProjectCard(C,p,i){
         }
         form.reset();
         showStatus(C.form.successMessage, 'success');
+        if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
       } catch {
         showStatus(C.form.unknownMessage, 'error');
       } finally {
